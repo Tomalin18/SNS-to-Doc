@@ -1,0 +1,411 @@
+/* 改進的 Discord 按鈕樣式 */
+.discord-button-container {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+.discord-button-container:hover {
+  transform: scale(1.1);
+}
+
+.discord-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgb(110, 118, 125);
+  background-color: transparent;
+}
+
+.discord-button:hover {
+  background-color: rgba(88, 101, 242, 0.1);
+  color: rgb(88, 101, 242);
+}
+
+.discord-button-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.discord-button-inner svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 按鈕狀態 */
+.discord-button.loading .discord-button-inner {
+  animation: discord-spin 1s linear infinite;
+}
+
+.discord-button.success {
+  color: rgb(0, 186, 124);
+  background-color: rgba(0, 186, 124, 0.1);
+}
+
+.discord-button.error {
+  color: rgb(244, 33, 46);
+  background-color: rgba(244, 33, 46, 0.1);
+}
+
+/* 加載動畫 */
+@keyframes discord-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 配置模態框樣式 */
+.discord-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.discord-modal {
+  background-color: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: discord-modal-appear 0.3s ease-out;
+}
+
+@keyframes discord-modal-appear {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 深色模式支持 */
+html[data-theme="dark"] .discord-modal {
+  background-color: rgb(22, 24, 28);
+  color: rgb(231, 233, 234);
+  border: 1px solid rgb(47, 51, 54);
+}
+
+.discord-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgb(239, 243, 244);
+}
+
+html[data-theme="dark"] .discord-modal-header {
+  border-bottom: 1px solid rgb(47, 51, 54);
+}
+
+.discord-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgb(15, 20, 25);
+}
+
+html[data-theme="dark"] .discord-modal-header h2 {
+  color: rgb(231, 233, 234);
+}
+
+.discord-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: rgb(83, 100, 113);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.discord-modal-close:hover {
+  background-color: rgba(15, 20, 25, 0.1);
+}
+
+html[data-theme="dark"] .discord-modal-close {
+  color: rgb(139, 152, 165);
+}
+
+html[data-theme="dark"] .discord-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.discord-modal-body {
+  padding: 20px;
+}
+
+.discord-form-group {
+  margin-bottom: 20px;
+}
+
+.discord-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgb(15, 20, 25);
+}
+
+html[data-theme="dark"] .discord-form-group label {
+  color: rgb(231, 233, 234);
+}
+
+.discord-form-group input[type="text"],
+.discord-form-group input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgb(207, 217, 222);
+  background-color: white;
+  color: rgb(15, 20, 25);
+  font-size: 14px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.discord-form-group input[type="text"]:focus,
+.discord-form-group input[type="password"]:focus {
+  border-color: rgb(88, 101, 242);
+  box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.5);
+}
+
+html[data-theme="dark"] .discord-form-group input[type="text"],
+html[data-theme="dark"] .discord-form-group input[type="password"] {
+  border-color: rgb(47, 51, 54);
+  background-color: rgb(30, 39, 50);
+  color: rgb(231, 233, 234);
+}
+
+html[data-theme="dark"] .discord-form-group input[type="text"]:focus,
+html[data-theme="dark"] .discord-form-group input[type="password"]:focus {
+  border-color: rgb(88, 101, 242);
+  box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.5);
+}
+
+.discord-form-help {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgb(83, 100, 113);
+  line-height: 1.4;
+}
+
+html[data-theme="dark"] .discord-form-help {
+  color: rgb(139, 152, 165);
+}
+
+.discord-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.discord-radio-group label {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  margin: 0;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.discord-radio-group label:hover {
+  background-color: rgba(15, 20, 25, 0.05);
+}
+
+html[data-theme="dark"] .discord-radio-group label:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.discord-radio-group input {
+  margin-right: 10px;
+  accent-color: rgb(88, 101, 242);
+  cursor: pointer;
+}
+
+.discord-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.discord-btn {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.discord-btn-primary {
+  background-color: rgb(88, 101, 242);
+  color: white;
+}
+
+.discord-btn-primary:hover {
+  background-color: rgb(71, 82, 196);
+}
+
+.discord-btn-secondary {
+  background-color: transparent;
+  color: rgb(15, 20, 25);
+  border: 1px solid rgb(207, 217, 222);
+}
+
+.discord-btn-secondary:hover {
+  background-color: rgba(15, 20, 25, 0.1);
+}
+
+html[data-theme="dark"] .discord-btn-secondary {
+  color: rgb(231, 233, 234);
+  border-color: rgb(47, 51, 54);
+}
+
+html[data-theme="dark"] .discord-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.discord-success-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(0, 186, 124, 0.1);
+  color: rgb(0, 186, 124);
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  animation: discord-message-appear 0.3s ease-out;
+}
+
+.discord-warning-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(255, 173, 31, 0.1);
+  color: rgb(255, 173, 31);
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  animation: discord-message-appear 0.3s ease-out;
+}
+
+@keyframes discord-message-appear {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.discord-info-box {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: rgba(88, 101, 242, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid rgb(88, 101, 242);
+}
+
+.discord-info-box strong {
+  display: block;
+  margin-bottom: 8px;
+  color: rgb(88, 101, 242);
+}
+
+.discord-info-box p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(83, 100, 113);
+}
+
+html[data-theme="dark"] .discord-info-box strong {
+  color: rgb(138, 149, 255);
+}
+
+html[data-theme="dark"] .discord-info-box p {
+  color: rgb(139, 152, 165);
+}
+
+.discord-form-group a {
+  color: rgb(88, 101, 242);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.discord-form-group a:hover {
+  text-decoration: underline;
+}
+
+/* 導航中的配置按鈕 */
+/* 在 styles.css 中添加或修改以下樣式 */
+.discord-config-nav-button {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  margin: 8px 12px !important;
+  transition: background-color 0.2s !important;
+  border: 1px solid rgba(29, 155, 240, 0.3) !important;
+  background-color: rgba(29, 155, 240, 0.1) !important;
+  position: relative !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.discord-config-nav-button:hover {
+  background-color: rgba(29, 155, 240, 0.2) !important;
+}
+
+.discord-config-btn-inner {
+  pointer-events: none !important;
+}
+
+html[data-theme="dark"] .discord-config-nav-button {
+  background-color: rgb(22, 24, 28);
+  border-color: rgb(47, 51, 54);
+}
+
+html[data-theme="dark"] .discord-config-nav-button:hover {
+  background-color: rgba(88, 101, 242, 0.1);
+}
+
+.discord-config-btn-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(88, 101, 242);
+}
+
+.discord-config-btn-inner svg {
+  fill: rgb(88, 101, 242);
+}
+
+.discord-config-btn-inner span {
+  font-weight: 500;
+  font-size: 14px;
+}
