@@ -393,8 +393,13 @@
 	async function sendToDiscord(summary, originalText, author, url) {
 		console.log("[Twitter->Discord] Sending summary to Discord:", summary);
 
-		// 使用簡單的消息格式，Discord 會自動嵌入推文連結
-		const content = `${summary}\n\n${url}`;
+		let content;
+
+		if (config.apiProvider === "none") {
+			content = url;
+		} else {
+			content = `${summary}\n\n${url}`;
+		}
 
 		const payload = {
 			content: content,
