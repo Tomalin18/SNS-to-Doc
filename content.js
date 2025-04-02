@@ -166,14 +166,6 @@
 
 		console.log(`[Twitter->Discord] 推文包含 ${imageUrls.length} 張圖片`);
 
-		// 短推文但有圖片的情況下仍然進行摘要
-		if (text.length < 100 && imageUrls.length === 0) {
-			console.log(
-				"[Twitter->Discord] Tweet is short enough and has no images, not summarizing"
-			);
-			return text;
-		}
-
 		try {
 			// 檢測語言
 			const containsChinese = /[\u4e00-\u9fa5]/.test(text);
@@ -211,14 +203,14 @@
 				return await summarizeWithAnthropic(text, isAsianLanguage);
 			} else {
 				console.log(
-					"[Twitter->Discord] No API configured, using simple truncation"
+					"[Twitter->Discord] No API configured, using original text"
 				);
-				// 簡單截斷
-				return text.length > 200 ? text.substring(0, 197) + "..." : text;
+				// 返回原始文本，不進行截斷
+				return text;
 			}
 		} catch (error) {
 			console.error("[Twitter->Discord] Error summarizing tweet:", error);
-			return text.length > 200 ? text.substring(0, 197) + "..." : text;
+			return text;
 		}
 	}
 
@@ -253,7 +245,6 @@
 						content: `${promptLanguage}\n\n"${text}"`,
 					},
 				],
-				max_tokens: 150,
 			}),
 		});
 
@@ -322,7 +313,6 @@
 			body: JSON.stringify({
 				model: "gpt-4o", // 更新為最新的 GPT-4o 模型，該模型已整合視覺能力
 				messages: messages,
-				max_tokens: 150,
 			}),
 		});
 
@@ -369,7 +359,6 @@
 						content: `${promptLanguage}\n\n"${text}"`,
 					},
 				],
-				max_tokens: 150,
 			}),
 		});
 
