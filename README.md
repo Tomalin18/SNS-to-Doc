@@ -1,15 +1,16 @@
 
-# Twitter to Discord
+# Social Media to Discord
 
-A browser extension that allows you to send tweet summaries directly to Discord with a single click. The extension uses AI to create concise summaries of tweets, including content from both text and images, and posts them to your Discord server via webhooks.
+A browser extension that allows you to send custom-processed social media posts directly to Discord with a single click. The extension supports both Twitter and Threads, uses AI to process posts according to your custom instructions, including content from both text and images, and posts them to your Discord server via webhooks.
 
 ## Features
 
-- 🔍 **AI-Powered Summaries**: Automatically generates concise summaries of tweets using OpenAI or Anthropic APIs
-- 🖼️ **Image Analysis**: Analyzes images in tweets to include their content in summaries (with OpenAI)
+- 🎯 **Custom AI Processing**: Process posts with your own custom instructions using OpenAI or Anthropic APIs
+- 🖼️ **Image Analysis**: Analyzes images in posts to include their content in processing (with OpenAI)
 - 🌐 **Multilingual Support**: Works with any language, including Chinese, Japanese, Korean, and more
-- 🔄 **Simple Interface**: Adds a Discord button next to each tweet's action bar
-- ⚙️ **Flexible Configuration**: Choose between OpenAI or Anthropic for summarization, or use simple truncation
+- 🔄 **Simple Interface**: Adds a Discord button next to each post's action bar
+- 📱 **Multi-Platform Support**: Works with both Twitter and Threads
+- ⚙️ **Flexible Configuration**: Choose between OpenAI or Anthropic for processing, or use simple truncation
 - 🔐 **Privacy-Focused**: Your API keys are stored only in your browser's local storage
 
 ## Installation
@@ -39,10 +40,11 @@ Before using the extension, you need to set up a Discord webhook and (optionally
 
 After configuration:
 
-1. Browse Twitter as normal
-2. For any tweet you want to share, click the Discord logo button in the tweet's action bar
-3. The extension will summarize the tweet (and analyze any images if using OpenAI)
-4. The summary will be posted to your configured Discord channel with a link to the original tweet
+1. Browse Twitter or Threads as normal
+2. For any post you want to share, click the Discord logo button in the post's action bar
+3. Enter your custom processing instructions in the dialog that appears
+4. The extension will process the post according to your instructions (and analyze any images if using OpenAI)
+5. The processed content will be posted to your configured Discord channel with a link to the original post
 
 ## Keyboard Shortcuts
 

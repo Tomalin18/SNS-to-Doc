@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Twitter to Discord",
   "version": "1.0",
-  "description": "Summarize Twitter posts and share to Discord",
+  "description": "Customize and share Twitter/Threads posts to Discord with AI",
   "permissions": [
     "storage",
     "activeTab"
@@ -10,12 +10,13 @@
   "host_permissions": [
     "https://twitter.com/*",
     "https://x.com/*",
+    "https://threads.net/*",
     "https://api.openai.com/*",
     "https://api.anthropic.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://twitter.com/*", "https://x.com/*"],
+      "matches": ["https://twitter.com/*", "https://x.com/*", "https://threads.net/*"],
       "js": ["content.js"],
       "css": ["styles.css"]
     }
