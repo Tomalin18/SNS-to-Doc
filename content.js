@@ -5,6 +5,8 @@
 	// Configuration variables (will be loaded from storage)
 	let config = {
 		discordWebhookUrl: "",
+		discordChannels: [], // 存儲多個 Discord 頻道
+		selectedChannelId: "", // 當前選中的頻道 ID
 		apiProvider: "openai", // 'openai' or 'anthropic'
 		openaiApiKey: "",
 		anthropicApiKey: "",
@@ -16,8 +18,6 @@
 		const hostname = window.location.hostname;
 		if (hostname.includes('twitter.com') || hostname.includes('x.com')) {
 			return 'twitter';
-		} else if (hostname.includes('threads.net')) {
-			return 'threads';
 		}
 		return 'unknown';
 	}
@@ -31,6 +31,8 @@
 			chrome.storage.sync.get(
 				[
 					"discordWebhookUrl",
+					"discordChannels",
+					"selectedChannelId",
 					"apiProvider",
 					"openaiApiKey",
 					"anthropicApiKey",
@@ -39,6 +41,10 @@
 				(result) => {
 					if (result.discordWebhookUrl)
 						config.discordWebhookUrl = result.discordWebhookUrl;
+					if (result.discordChannels)
+						config.discordChannels = result.discordChannels;
+					if (result.selectedChannelId)
+						config.selectedChannelId = result.selectedChannelId;
 					if (result.apiProvider) config.apiProvider = result.apiProvider;
 					if (result.openaiApiKey) config.openaiApiKey = result.openaiApiKey;
 					if (result.anthropicApiKey)
@@ -50,10 +56,195 @@
 		});
 	}
 
+	// Function to load Discord channels into select dropdown
+	function loadDiscordChannels() {
+		const channelSelect = document.getElementById('discord-channel-select');
+		if (!channelSelect) return;
+
+		// Clear existing options except the first one
+		channelSelect.innerHTML = '<option value="">請選擇頻道...</option>';
+
+		// Add default webhook option
+		const defaultOption = document.createElement('option');
+		defaultOption.value = 'default';
+		defaultOption.textContent = '預設頻道 (使用 Webhook URL)';
+		if (!config.selectedChannelId || config.selectedChannelId === 'default') {
+			defaultOption.selected = true;
+		}
+		channelSelect.appendChild(defaultOption);
+
+		// Add stored channels
+		if (config.discordChannels && config.discordChannels.length > 0) {
+			config.discordChannels.forEach(channel => {
+				const option = document.createElement('option');
+				option.value = channel.id;
+				option.textContent = `# ${channel.name}`;
+				if (channel.id === config.selectedChannelId) {
+					option.selected = true;
+				}
+				channelSelect.appendChild(option);
+			});
+		}
+
+		// Add "Add new channel" option
+		const addOption = document.createElement('option');
+		addOption.value = 'add-new';
+		addOption.textContent = '+ 新增頻道...';
+		channelSelect.appendChild(addOption);
+
+		// Add event listener for channel selection
+		channelSelect.addEventListener('change', (e) => {
+			if (e.target.value === 'add-new') {
+				showAddChannelDialog();
+			}
+		});
+	}
+
+	// Function to show add channel dialog
+	function showAddChannelDialog() {
+		// Remove existing modal if any
+		const existingModal = document.getElementById("add-channel-modal");
+		if (existingModal) {
+			existingModal.remove();
+		}
+
+		// Create modal container
+		const modalContainer = document.createElement("div");
+		modalContainer.id = "add-channel-modal";
+		modalContainer.className = "discord-modal-container";
+
+		modalContainer.innerHTML = `
+      <div class="discord-modal">
+        <div class="discord-modal-header">
+          <div class="discord-modal-title">
+            <svg class="discord-modal-icon" width="20" height="20" viewBox="0 0 71 55" fill="currentColor">
+              <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/>
+            </svg>
+            <h2>新增 Discord 頻道</h2>
+          </div>
+          <button type="button" class="discord-modal-close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="discord-modal-body">
+          <form id="add-channel-form">
+            <div class="discord-input-block">
+              <label class="discord-input-label">頻道名稱</label>
+              <div class="discord-input-wrapper">
+                <input type="text" id="channel-name" class="discord-input" placeholder="例如：技術討論、新聞分享..." />
+              </div>
+            </div>
+            
+            <div class="discord-input-block">
+              <label class="discord-input-label">Webhook URL</label>
+              <div class="discord-input-wrapper">
+                <input type="url" id="channel-webhook" class="discord-input" placeholder="https://discord.com/api/webhooks/..." />
+              </div>
+              <div class="discord-input-hint">
+                在 Discord 伺服器中創建 Webhook 並複製 URL 到此處
+              </div>
+            </div>
+            
+            <div class="discord-form-actions">
+              <button type="button" class="discord-btn discord-btn-secondary" id="add-channel-cancel">取消</button>
+              <button type="submit" class="discord-btn discord-btn-primary">新增頻道</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+		// Add to page
+		document.body.appendChild(modalContainer);
+
+		// Close modal on backdrop click
+		modalContainer.addEventListener("click", (e) => {
+			if (e.target === modalContainer) {
+				modalContainer.remove();
+			}
+		});
+
+		// Close modal on X button click
+		document
+			.querySelector(".discord-modal-close")
+			.addEventListener("click", () => {
+				modalContainer.remove();
+			});
+
+		// Close modal on Cancel button click
+		document
+			.getElementById("add-channel-cancel")
+			.addEventListener("click", () => {
+				modalContainer.remove();
+			});
+
+		// Handle form submission
+		document
+			.getElementById("add-channel-form")
+			.addEventListener("submit", async (e) => {
+				e.preventDefault();
+
+				const channelName = document.getElementById("channel-name").value.trim();
+				const webhookUrl = document.getElementById("channel-webhook").value.trim();
+
+				if (!channelName) {
+					alert("請輸入頻道名稱");
+					return;
+				}
+
+				if (!webhookUrl) {
+					alert("請輸入 Webhook URL");
+					return;
+				}
+
+				// Validate webhook URL
+				if (!webhookUrl.includes('discord.com/api/webhooks/')) {
+					alert("請輸入有效的 Discord Webhook URL");
+					return;
+				}
+
+				// Add channel to config
+				const newChannel = {
+					id: Date.now().toString(),
+					name: channelName,
+					webhookUrl: webhookUrl
+				};
+
+				if (!config.discordChannels) {
+					config.discordChannels = [];
+				}
+				config.discordChannels.push(newChannel);
+				config.selectedChannelId = newChannel.id;
+
+				// Save config
+				saveConfig();
+
+				// Close modal
+				modalContainer.remove();
+
+				// Reload channels in the original dialog
+				const originalModal = document.getElementById("custom-prompt-modal");
+				if (originalModal) {
+					loadDiscordChannels();
+					// Select the newly added channel
+					const channelSelect = document.getElementById('discord-channel-select');
+					if (channelSelect) {
+						channelSelect.value = newChannel.id;
+					}
+				}
+
+				alert(`頻道 "${channelName}" 已成功新增！`);
+			});
+	}
+
 	// Function to save config to storage
 	function saveConfig() {
 		chrome.storage.sync.set({
 			discordWebhookUrl: config.discordWebhookUrl,
+			discordChannels: config.discordChannels,
+			selectedChannelId: config.selectedChannelId,
 			apiProvider: config.apiProvider,
 			openaiApiKey: config.openaiApiKey,
 			anthropicApiKey: config.anthropicApiKey,
@@ -70,10 +261,6 @@
 			posts = document.querySelectorAll("article");
 			actionBarSelector = '[role="group"]';
 			console.log(`[Social->Discord] 找到 ${posts.length} 個 Twitter 推文`);
-		} else if (currentPlatform === 'threads') {
-			posts = document.querySelectorAll('[data-testid="post"]');
-			actionBarSelector = '[data-testid="post-actions"]';
-			console.log(`[Social->Discord] 找到 ${posts.length} 個 Threads 貼文`);
 		} else {
 			console.log("[Social->Discord] 不支援的平台");
 			return;
@@ -152,7 +339,7 @@
             <svg class="discord-modal-icon" width="20" height="20" viewBox="0 0 71 55" fill="currentColor">
               <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/>
             </svg>
-            <h2>自定義處理 ${currentPlatform === 'twitter' ? '推文' : '貼文'}</h2>
+            <h2>自定義處理推文</h2>
           </div>
           <button type="button" class="discord-modal-close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -165,12 +352,21 @@
             <div class="discord-input-block">
               <label class="discord-input-label">自定義 Prompt</label>
               <div class="discord-input-wrapper">
-                <textarea id="custom-prompt" class="discord-input" rows="4" placeholder="請輸入您希望 AI 如何處理這篇${currentPlatform === 'twitter' ? '推文' : '貼文'}的指令...
+                <textarea id="custom-prompt" class="discord-input" rows="4" placeholder="請輸入您希望 AI 如何處理這篇推文的指令...
 
 例如：
 - 將這篇推文改寫成專業的技術文章摘要
 - 提取關鍵資訊並整理成條列式
 - 翻譯成繁體中文並加上個人評論"></textarea>
+              </div>
+            </div>
+            
+            <div class="discord-input-block">
+              <label class="discord-input-label">選擇 Discord 頻道</label>
+              <div class="discord-input-wrapper">
+                <select id="discord-channel-select" class="discord-input">
+                  <option value="">請選擇頻道...</option>
+                </select>
               </div>
             </div>
             
@@ -185,6 +381,9 @@
 
 		// Add to page
 		document.body.appendChild(modalContainer);
+
+		// Load Discord channels into select dropdown
+		loadDiscordChannels();
 
 		// Close modal on backdrop click
 		modalContainer.addEventListener("click", (e) => {
@@ -219,16 +418,22 @@
 					return;
 				}
 
+				const selectedChannelId = document.getElementById("discord-channel-select").value;
+				if (!selectedChannelId) {
+					alert("請選擇 Discord 頻道");
+					return;
+				}
+
 				// Close modal
 				modalContainer.remove();
 
-				// Process the post with custom prompt
-				await processPostWithCustomPrompt(post, customPrompt);
+				// Process the post with custom prompt and selected channel
+				await processPostWithCustomPrompt(post, customPrompt, selectedChannelId);
 			});
 	}
 
 	// Function to process post with custom prompt
-	async function processPostWithCustomPrompt(post, customPrompt) {
+	async function processPostWithCustomPrompt(post, customPrompt, selectedChannelId = null) {
 		// Find the button to show loading state
 		const discordButton = post.querySelector(".discord-button");
 		if (discordButton) {
@@ -252,26 +457,13 @@
 						break;
 					}
 				}
-			} else if (currentPlatform === 'threads') {
-				postText = post.querySelector('[data-testid="post-text"]')?.textContent || "";
-				const authorElement = post.querySelector('[data-testid="post-author-name"]');
-				author = authorElement?.textContent || "";
-				
-				// Get post URL (Threads URL structure)
-				const links = post.querySelectorAll("a");
-				for (const link of links) {
-					if (link.href && link.href.includes("/post/")) {
-						postUrl = link.href;
-						break;
-					}
-				}
 			}
 
 			// Generate content using custom prompt
 			const processedContent = await processWithCustomPrompt(postText, post, customPrompt);
 
 			// Send to Discord
-			await sendToDiscord(processedContent, postText, author, postUrl);
+			await sendToDiscord(processedContent, postText, author, postUrl, selectedChannelId);
 
 			// Show success state
 			if (discordButton) {
@@ -315,11 +507,6 @@
 		if (currentPlatform === 'twitter') {
 			const tweetImages = post.querySelectorAll('img[src*="pbs.twimg.com/media"]');
 			imageUrls = Array.from(tweetImages)
-				.map((img) => img.src)
-				.filter((src) => src);
-		} else if (currentPlatform === 'threads') {
-			const threadImages = post.querySelectorAll('img[src*="scontent"]');
-			imageUrls = Array.from(threadImages)
 				.map((img) => img.src)
 				.filter((src) => src);
 		}
@@ -699,7 +886,7 @@
 	}
 
 	// Function to send to Discord
-	async function sendToDiscord(summary, originalText, author, url) {
+	async function sendToDiscord(summary, originalText, author, url, channelId = null) {
 		console.log("[Twitter->Discord] Sending summary to Discord:", summary);
 
 		let content;
@@ -720,7 +907,18 @@
 			JSON.stringify(payload, null, 2)
 		);
 
-		const response = await fetch(config.discordWebhookUrl, {
+		// 根據頻道 ID 選擇正確的 webhook URL
+		let webhookUrl = config.discordWebhookUrl;
+		if (channelId && channelId !== 'default' && config.discordChannels) {
+			const selectedChannel = config.discordChannels.find(ch => ch.id === channelId);
+			if (selectedChannel && selectedChannel.webhookUrl) {
+				webhookUrl = selectedChannel.webhookUrl;
+			}
+		}
+
+		console.log(`[Twitter->Discord] 使用 webhook URL: ${webhookUrl}`);
+
+		const response = await fetch(webhookUrl, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
