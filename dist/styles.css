@@ -1,0 +1,543 @@
+/* 改進的 Discord 按鈕樣式 */
+.discord-button-container {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+.discord-button-container:hover {
+  transform: scale(1.1);
+}
+
+.discord-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgb(110, 118, 125);
+  background-color: transparent;
+}
+
+.discord-button:hover {
+  background-color: rgba(88, 101, 242, 0.1);
+  color: rgb(88, 101, 242);
+}
+
+.discord-button-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.discord-button-inner svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 按鈕狀態 */
+.discord-button.loading .discord-button-inner {
+  animation: discord-spin 1s linear infinite;
+}
+
+.discord-button.success {
+  color: rgb(0, 186, 124);
+  background-color: rgba(0, 186, 124, 0.1);
+}
+
+.discord-button.error {
+  color: rgb(244, 33, 46);
+  background-color: rgba(244, 33, 46, 0.1);
+}
+
+/* 加載動畫 */
+@keyframes discord-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal styles - X (Twitter) inspired design */
+.discord-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: discord-modal-fade-in 0.2s ease-out;
+}
+
+@keyframes discord-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.discord-modal {
+  background: var(--discord-bg-primary);
+  border-radius: 16px;
+  box-shadow: 0 16px 70px rgba(0, 0, 0, 0.12);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: discord-modal-slide-up 0.3s ease-out;
+}
+
+@keyframes discord-modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.discord-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--discord-border);
+}
+
+.discord-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.discord-modal-icon {
+  color: var(--discord-accent);
+}
+
+.discord-modal-title h2 {
+  margin: 0;
+  color: var(--discord-text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--discord-text-secondary);
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discord-modal-close:hover {
+  background-color: var(--discord-hover);
+  color: var(--discord-text-primary);
+}
+
+.discord-modal-body {
+  padding: 20px;
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+}
+
+.discord-input-block {
+  margin-bottom: 16px;
+}
+
+.discord-input-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--discord-text-primary);
+  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-input-wrapper {
+  background-color: var(--discord-bg-secondary);
+  border: 1px solid var(--discord-border);
+  border-radius: 12px;
+  padding: 4px;
+  transition: border-color 0.15s;
+}
+
+.discord-input-wrapper:focus-within {
+  border-color: var(--discord-accent);
+}
+
+.discord-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--discord-text-primary);
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-input::placeholder {
+  color: var(--discord-text-placeholder);
+}
+
+.discord-input[type="textarea"],
+.discord-input[rows] {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-input select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.discord-input select option {
+  background-color: var(--discord-bg-primary);
+  color: var(--discord-text-primary);
+}
+
+.discord-input-hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--discord-text-secondary);
+  line-height: 1.4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-link {
+  color: var(--discord-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.discord-link:hover {
+  text-decoration: underline;
+}
+
+.discord-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.discord-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--discord-bg-secondary);
+  border: 1px solid var(--discord-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.discord-radio-option:hover {
+  background-color: var(--discord-hover);
+}
+
+.discord-radio-option input[type="radio"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--discord-accent);
+}
+
+.discord-radio-content {
+  flex: 1;
+}
+
+.discord-radio-title {
+  font-weight: 600;
+  color: var(--discord-text-primary);
+  font-size: 15px;
+  margin-bottom: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-radio-desc {
+  font-size: 13px;
+  color: var(--discord-text-secondary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-radio-option:has(input[type="radio"]:checked) {
+  background-color: var(--discord-accent-bg);
+  border-color: var(--discord-accent);
+}
+
+.discord-info-block {
+  background-color: var(--discord-info-bg);
+  border: 1px solid var(--discord-info-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.discord-info-icon {
+  color: var(--discord-info-icon);
+  margin-top: 2px;
+}
+
+.discord-info-content {
+  flex: 1;
+}
+
+.discord-info-title {
+  font-weight: 600;
+  color: var(--discord-info-title);
+  font-size: 14px;
+  margin-bottom: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-info-text {
+  font-size: 13px;
+  color: var(--discord-info-text);
+  line-height: 1.4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.discord-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--discord-border);
+}
+
+.discord-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  min-width: 80px;
+}
+
+.discord-btn-primary {
+  background-color: var(--discord-accent);
+  color: white;
+}
+
+.discord-btn-primary:hover {
+  background-color: var(--discord-accent-hover);
+}
+
+.discord-btn-secondary {
+  background-color: transparent;
+  color: var(--discord-text-primary);
+  border: 1px solid var(--discord-border);
+}
+
+.discord-btn-secondary:hover {
+  background-color: var(--discord-hover);
+}
+
+/* Dark mode variables */
+:root {
+  --discord-bg-primary: #ffffff;
+  --discord-bg-secondary: #f7f9fa;
+  --discord-text-primary: #0f1419;
+  --discord-text-secondary: #536471;
+  --discord-text-placeholder: #8b98a5;
+  --discord-border: #e1e8ed;
+  --discord-hover: #f1f3f4;
+  --discord-accent: #1d9bf0;
+  --discord-accent-hover: #1a8cd8;
+  --discord-accent-bg: #e8f4fd;
+  --discord-info-bg: #e8f4fd;
+  --discord-info-border: #1d9bf0;
+  --discord-info-icon: #1d9bf0;
+  --discord-info-title: #0f1419;
+  --discord-info-text: #536471;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --discord-bg-primary: #000000;
+    --discord-bg-secondary: #16181c;
+    --discord-text-primary: #ffffff;
+    --discord-text-secondary: #71767b;
+    --discord-text-placeholder: #71767b;
+    --discord-border: #2f3336;
+    --discord-hover: #1a1a1a;
+    --discord-accent: #1d9bf0;
+    --discord-accent-hover: #1a8cd8;
+    --discord-accent-bg: #1e3a5f;
+    --discord-info-bg: #1e3a5f;
+    --discord-info-border: #1d9bf0;
+    --discord-info-icon: #1d9bf0;
+    --discord-info-title: #ffffff;
+    --discord-info-text: #71767b;
+  }
+}
+
+/* Manual dark mode toggle */
+html[data-theme="dark"] {
+  --discord-bg-primary: #000000;
+  --discord-bg-secondary: #16181c;
+  --discord-text-primary: #ffffff;
+  --discord-text-secondary: #71767b;
+  --discord-text-placeholder: #71767b;
+  --discord-border: #2f3336;
+  --discord-hover: #1a1a1a;
+  --discord-accent: #1d9bf0;
+  --discord-accent-hover: #1a8cd8;
+  --discord-accent-bg: #1e3a5f;
+  --discord-info-bg: #1e3a5f;
+  --discord-info-border: #1d9bf0;
+  --discord-info-icon: #1d9bf0;
+  --discord-info-title: #ffffff;
+  --discord-info-text: #71767b;
+}
+
+.discord-success-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(0, 186, 124, 0.1);
+  color: rgb(0, 186, 124);
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  animation: discord-message-appear 0.3s ease-out;
+}
+
+.discord-warning-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(255, 173, 31, 0.1);
+  color: rgb(255, 173, 31);
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  animation: discord-message-appear 0.3s ease-out;
+}
+
+@keyframes discord-message-appear {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.discord-info-box {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: rgba(88, 101, 242, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid rgb(88, 101, 242);
+}
+
+.discord-info-box strong {
+  display: block;
+  margin-bottom: 8px;
+  color: rgb(88, 101, 242);
+}
+
+.discord-info-box p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(83, 100, 113);
+}
+
+html[data-theme="dark"] .discord-info-box strong {
+  color: rgb(138, 149, 255);
+}
+
+html[data-theme="dark"] .discord-info-box p {
+  color: rgb(139, 152, 165);
+}
+
+.discord-form-group a {
+  color: rgb(88, 101, 242);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.discord-form-group a:hover {
+  text-decoration: underline;
+}
+
+/* 導航中的配置按鈕 */
+/* 在 styles.css 中添加或修改以下樣式 */
+.discord-config-nav-button {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  margin: 8px 12px !important;
+  transition: background-color 0.2s !important;
+  border: 1px solid rgba(29, 155, 240, 0.3) !important;
+  background-color: rgba(29, 155, 240, 0.1) !important;
+  position: relative !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.discord-config-nav-button:hover {
+  background-color: rgba(29, 155, 240, 0.2) !important;
+}
+
+.discord-config-btn-inner {
+  pointer-events: none !important;
+}
+
+html[data-theme="dark"] .discord-config-nav-button {
+  background-color: rgb(22, 24, 28);
+  border-color: rgb(47, 51, 54);
+}
+
+html[data-theme="dark"] .discord-config-nav-button:hover {
+  background-color: rgba(88, 101, 242, 0.1);
+}
+
+.discord-config-btn-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(88, 101, 242);
+}
+
+.discord-config-btn-inner svg {
+  fill: rgb(88, 101, 242);
+}
+
+.discord-config-btn-inner span {
+  font-weight: 500;
+  font-size: 14px;
+}
