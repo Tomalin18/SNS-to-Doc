@@ -13,13 +13,13 @@
 - [x] ✅ styles.css (已準備)
 - [x] ✅ 圖示檔案 (16px, 48px, 128px)
 - [x] ✅ 語言檔案 (en.json, zh-TW.json)
-- [x] ✅ 套件檔案 (twitter-to-discord-extension.zip)
+- [x] ✅ 套件檔案 (share-to-discord-extension.zip)
 
 ## 📝 商店資訊填寫
 
 ### 基本資訊
-- **名稱**: Twitter to Discord
-- **摘要**: AI-powered Twitter content sharing to Discord
+- **名稱**: Share to Discord
+- **摘要**: AI-powered social media content sharing to Discord
 - **描述**: 使用 store-description.md 中的內容
 - **類別**: 生產力工具
 - **語言**: 英文、繁體中文
@@ -59,13 +59,13 @@
 ### 1. 上傳套件
 1. 前往 [Chrome Web Store Developer Console](https://chrome.google.com/webstore/devconsole/)
 2. 點擊「新增項目」
-3. 上傳 `twitter-to-discord-extension.zip`
+3. 上傳 `share-to-discord-extension.zip`
 4. 等待上傳完成
 
 ### 2. 填寫商店資訊
 1. **基本資訊**
-   - 名稱: Twitter to Discord
-   - 摘要: AI-powered Twitter content sharing to Discord
+   - 名稱: Share to Discord
+   - 摘要: AI-powered social media content sharing to Discord
    - 描述: 使用 store-description.md
 
 2. **圖片**

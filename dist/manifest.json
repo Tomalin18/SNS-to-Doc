@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Twitter to Discord",
+  "name": "Share to Discord",
   "version": "1.0",
-  "description": "Customize and share Twitter posts to Discord with AI",
+  "description": "Customize and share social media posts to Discord with AI",
   "permissions": [
     "storage",
     "activeTab"

@@ -23,7 +23,7 @@
     "enterCustomPrompt": "請輸入自定義 prompt",
     "selectDiscordChannelError": "請選擇 Discord 頻道",
     "sendToDiscord": "發送到 Discord",
-    "socialToDiscordSettings": "Social to Discord 設定",
+    "socialToDiscordSettings": "Share to Discord 設定",
     "discordWebhookUrl": "Discord Webhook URL",
     "discordWebhookHint": "在 Discord 伺服器中創建一個 webhook (伺服器設置 → 整合 → Webhooks)",
     "aiProcessingService": "AI 處理服務",

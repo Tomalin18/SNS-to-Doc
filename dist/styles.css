@@ -178,6 +178,8 @@
   border-radius: 12px;
   padding: 4px;
   transition: border-color 0.15s;
+  position: relative;
+  overflow: hidden;
 }
 
 .discord-input-wrapper:focus-within {
@@ -193,6 +195,10 @@
   color: var(--discord-text-primary);
   outline: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .discord-input::placeholder {
@@ -205,6 +211,18 @@
   resize: vertical;
   line-height: 1.5;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* 特殊處理長 URL 輸入欄位 */
+.discord-input[type="url"] {
+  overflow-x: auto;
+  white-space: nowrap;
+  text-overflow: unset;
+}
+
+.discord-input[type="url"]:focus {
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .discord-input select {

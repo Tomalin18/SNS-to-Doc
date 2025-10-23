@@ -23,7 +23,7 @@
     "enterCustomPrompt": "Please enter custom prompt",
     "selectDiscordChannelError": "Please select Discord channel",
     "sendToDiscord": "Send to Discord",
-    "socialToDiscordSettings": "Social to Discord Settings",
+    "socialToDiscordSettings": "Share to Discord Settings",
     "discordWebhookUrl": "Discord Webhook URL",
     "discordWebhookHint": "Create a webhook in your Discord server (Server Settings → Integrations → Webhooks)",
     "aiProcessingService": "AI Processing Service",

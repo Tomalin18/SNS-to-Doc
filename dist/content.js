@@ -17,6 +17,19 @@
 	// 國際化系統
 	let i18n = {};
 	
+	// 檢查擴充功能上下文是否有效
+	function isExtensionContextValid() {
+		try {
+			return typeof chrome !== 'undefined' && 
+				   chrome.storage && 
+				   chrome.storage.sync &&
+				   !chrome.runtime.lastError;
+		} catch (error) {
+			console.warn('Extension context check failed:', error);
+			return false;
+		}
+	}
+	
 	// 載入語言檔案
 	async function loadLanguage(lang = 'en') {
 		try {
@@ -70,7 +83,7 @@
 					enterCustomPrompt: "Please enter custom prompt",
 					selectDiscordChannelError: "Please select Discord channel",
 					sendToDiscord: "Send to Discord",
-					socialToDiscordSettings: "Social to Discord Settings",
+					socialToDiscordSettings: "Share to Discord Settings",
 					discordWebhookUrl: "Discord Webhook URL",
 					discordWebhookHint: "Create a webhook in your Discord server (Server Settings → Integrations → Webhooks)",
 					aiProcessingService: "AI Processing Service",
@@ -146,33 +159,81 @@
 	// Function to load config from storage
 	async function loadConfig() {
 		return new Promise((resolve) => {
-			chrome.storage.sync.get(
-				[
-					"discordWebhookUrl",
-					"discordChannels",
-					"selectedChannelId",
-					"apiProvider",
-					"openaiApiKey",
-					"anthropicApiKey",
-					"isConfigured",
-					"language",
-				],
-				(result) => {
-					if (result.discordWebhookUrl)
-						config.discordWebhookUrl = result.discordWebhookUrl;
-					if (result.discordChannels)
-						config.discordChannels = result.discordChannels;
-					if (result.selectedChannelId)
-						config.selectedChannelId = result.selectedChannelId;
-					if (result.apiProvider) config.apiProvider = result.apiProvider;
-					if (result.openaiApiKey) config.openaiApiKey = result.openaiApiKey;
-					if (result.anthropicApiKey)
-						config.anthropicApiKey = result.anthropicApiKey;
-					if (result.language) config.language = result.language;
-					config.isConfigured = result.isConfigured || false;
+			try {
+				// 檢查擴充功能上下文是否有效
+				if (isExtensionContextValid()) {
+					chrome.storage.sync.get(
+						[
+							"discordWebhookUrl",
+							"discordChannels",
+							"selectedChannelId",
+							"apiProvider",
+							"openaiApiKey",
+							"anthropicApiKey",
+							"isConfigured",
+							"language",
+						],
+						(result) => {
+							if (result.discordWebhookUrl)
+								config.discordWebhookUrl = result.discordWebhookUrl;
+							if (result.discordChannels)
+								config.discordChannels = result.discordChannels;
+							if (result.selectedChannelId)
+								config.selectedChannelId = result.selectedChannelId;
+							if (result.apiProvider) config.apiProvider = result.apiProvider;
+							if (result.openaiApiKey) config.openaiApiKey = result.openaiApiKey;
+							if (result.anthropicApiKey)
+								config.anthropicApiKey = result.anthropicApiKey;
+							if (result.language) config.language = result.language;
+							config.isConfigured = result.isConfigured || false;
+							console.log('Configuration loaded from chrome.storage');
+							resolve();
+						}
+					);
+				} else {
+					console.warn('Chrome storage API not available, trying localStorage fallback');
+					// 使用 localStorage 作為備用
+					const savedConfig = localStorage.getItem('share-to-discord-config');
+					if (savedConfig) {
+						try {
+							const parsedConfig = JSON.parse(savedConfig);
+							config.discordWebhookUrl = parsedConfig.discordWebhookUrl || "";
+							config.discordChannels = parsedConfig.discordChannels || [];
+							config.selectedChannelId = parsedConfig.selectedChannelId || "";
+							config.apiProvider = parsedConfig.apiProvider || "openai";
+							config.openaiApiKey = parsedConfig.openaiApiKey || "";
+							config.anthropicApiKey = parsedConfig.anthropicApiKey || "";
+							config.isConfigured = parsedConfig.isConfigured || false;
+							config.language = parsedConfig.language || "en";
+							console.log('Configuration loaded from localStorage');
+						} catch (parseError) {
+							console.error('Failed to parse localStorage config:', parseError);
+						}
+					}
 					resolve();
 				}
-			);
+			} catch (error) {
+				console.error('Failed to load configuration:', error);
+				// 嘗試從 localStorage 載入
+				try {
+					const savedConfig = localStorage.getItem('share-to-discord-config');
+					if (savedConfig) {
+						const parsedConfig = JSON.parse(savedConfig);
+						config.discordWebhookUrl = parsedConfig.discordWebhookUrl || "";
+						config.discordChannels = parsedConfig.discordChannels || [];
+						config.selectedChannelId = parsedConfig.selectedChannelId || "";
+						config.apiProvider = parsedConfig.apiProvider || "openai";
+						config.openaiApiKey = parsedConfig.openaiApiKey || "";
+						config.anthropicApiKey = parsedConfig.anthropicApiKey || "";
+						config.isConfigured = parsedConfig.isConfigured || false;
+						config.language = parsedConfig.language || "en";
+						console.log('Configuration loaded from localStorage fallback');
+					}
+				} catch (localStorageError) {
+					console.error('Failed to load from localStorage:', localStorageError);
+				}
+				resolve();
+			}
 		});
 	}
 
@@ -361,16 +422,53 @@
 
 	// Function to save config to storage
 	function saveConfig() {
-		chrome.storage.sync.set({
-			discordWebhookUrl: config.discordWebhookUrl,
-			discordChannels: config.discordChannels,
-			selectedChannelId: config.selectedChannelId,
-			apiProvider: config.apiProvider,
-			openaiApiKey: config.openaiApiKey,
-			anthropicApiKey: config.anthropicApiKey,
-			isConfigured: config.isConfigured,
-			language: config.language,
-		});
+		try {
+			// 檢查擴充功能上下文是否有效
+			if (isExtensionContextValid()) {
+				chrome.storage.sync.set({
+					discordWebhookUrl: config.discordWebhookUrl,
+					discordChannels: config.discordChannels,
+					selectedChannelId: config.selectedChannelId,
+					apiProvider: config.apiProvider,
+					openaiApiKey: config.openaiApiKey,
+					anthropicApiKey: config.anthropicApiKey,
+					isConfigured: config.isConfigured,
+					language: config.language,
+				});
+				console.log('Configuration saved successfully');
+			} else {
+				console.warn('Chrome storage API not available, using localStorage fallback');
+				// 使用 localStorage 作為備用
+				localStorage.setItem('share-to-discord-config', JSON.stringify({
+					discordWebhookUrl: config.discordWebhookUrl,
+					discordChannels: config.discordChannels,
+					selectedChannelId: config.selectedChannelId,
+					apiProvider: config.apiProvider,
+					openaiApiKey: config.openaiApiKey,
+					anthropicApiKey: config.anthropicApiKey,
+					isConfigured: config.isConfigured,
+					language: config.language,
+				}));
+			}
+		} catch (error) {
+			console.error('Failed to save configuration:', error);
+			// 使用 localStorage 作為備用
+			try {
+				localStorage.setItem('share-to-discord-config', JSON.stringify({
+					discordWebhookUrl: config.discordWebhookUrl,
+					discordChannels: config.discordChannels,
+					selectedChannelId: config.selectedChannelId,
+					apiProvider: config.apiProvider,
+					openaiApiKey: config.openaiApiKey,
+					anthropicApiKey: config.anthropicApiKey,
+					isConfigured: config.isConfigured,
+					language: config.language,
+				}));
+				console.log('Configuration saved to localStorage as fallback');
+			} catch (localStorageError) {
+				console.error('Failed to save to localStorage:', localStorageError);
+			}
+		}
 	}
 
 	// Function to inject our button into posts
@@ -1003,7 +1101,7 @@
               <div class="discord-input-wrapper">
                 <input type="text" id="discord-webhook-url" name="discord-webhook-url" class="discord-input" value="${
 									config.discordWebhookUrl
-								}" placeholder="https://discord.com/api/webhooks/..." required>
+								}" placeholder="https://discord.com/api/webhooks/..." title="${config.discordWebhookUrl || 'Enter Discord Webhook URL'}" required>
               </div>
               <div class="discord-input-hint">${t('ui.discordWebhookHint')}</div>
             </div>

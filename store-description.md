@@ -1,8 +1,8 @@
-# Twitter to Discord - Chrome 擴充功能商店描述
+# Share to Discord - Chrome 擴充功能商店描述
 
 ## 📝 基本資訊
 
-**擴充功能名稱：** Twitter to Discord  
+**擴充功能名稱：** Share to Discord  
 **版本：** 1.0  
 **類別：** 生產力工具  
 **語言：** 英文、繁體中文  
@@ -10,7 +10,7 @@
 ## 🎯 功能描述
 
 ### 英文版本
-Transform your Twitter experience with AI-powered content sharing to Discord. This extension allows you to:
+Transform your social media experience with AI-powered content sharing to Discord. This extension allows you to:
 
 - **🤖 AI-Powered Processing**: Use OpenAI GPT-4o or Anthropic Claude to summarize and transform tweets
 - **📤 One-Click Sharing**: Send processed content directly to Discord channels
@@ -18,10 +18,10 @@ Transform your Twitter experience with AI-powered content sharing to Discord. Th
 - **⚙️ Customizable**: Set up multiple Discord channels and custom AI prompts
 - **🔒 Privacy-Focused**: All API keys stored locally in your browser
 
-Perfect for content creators, researchers, and anyone who wants to share Twitter insights with their Discord community.
+Perfect for content creators, researchers, and anyone who wants to share social media insights with their Discord community.
 
 ### 繁體中文版本
-使用 AI 技術將 Twitter 內容分享到 Discord 的強大擴充功能：
+使用 AI 技術將社群媒體內容分享到 Discord 的強大擴充功能：
 
 - **🤖 AI 智能處理**：使用 OpenAI GPT-4o 或 Anthropic Claude 總結和轉換推文
 - **📤 一鍵分享**：直接將處理後的內容發送到 Discord 頻道
@@ -29,7 +29,7 @@ Perfect for content creators, researchers, and anyone who wants to share Twitter
 - **⚙️ 可自定義**：設定多個 Discord 頻道和自定義 AI 提示
 - **🔒 隱私保護**：所有 API 密鑰僅存儲在您的瀏覽器中
 
-適合內容創作者、研究人員和任何想要與 Discord 社群分享 Twitter 洞察的使用者。
+適合內容創作者、研究人員和任何想要與 Discord 社群分享社群媒體洞察的使用者。
 
 ## 🖼️ 商店圖片
 
