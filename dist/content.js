@@ -93,12 +93,17 @@
 					anthropicDescription: "Supports text analysis",
 					noAi: "No AI",
 					noAiDescription: "Simple truncation of long posts",
+					aiProcessingMethod: "AI 處理方式",
+					noAiOption: "不使用 AI - 只分享連結",
+					useOpenAI: "使用 OpenAI (GPT-4o)",
+					useAnthropic: "使用 Anthropic (Claude)",
+					settings: "設定",
 					openaiApiKey: "OpenAI API Key",
 					openaiApiKeyPlaceholder: "sk-...",
 					openaiApiKeyHint: "Get API key from <a href=\"https://platform.openai.com/account/api-keys\" target=\"_blank\" class=\"discord-link\">OpenAI website</a>",
 					anthropicApiKey: "Anthropic API Key",
 					anthropicApiKeyPlaceholder: "sk-ant-...",
-					anthropicApiKeyHint: "Get API key from <a href=\"https://console.anthropic.com/keys\" target=\"_blank\" class=\"discord-link\">Anthropic website</a>",
+					anthropicApiKeyHint: "Get API key from <a href=\"https://www.claude.com/platform/api\" target=\"_blank\" class=\"discord-link\">Claude Developer Platform</a>",
 					aboutApiKeys: "About API Keys",
 					apiKeysDescription: "Your API keys are only stored in your browser and are not sent anywhere else. Processing requests are sent directly from your browser to the API provider.",
 					saveSettings: "Save Settings",
@@ -556,15 +561,34 @@
             </svg>
             <h2>${t('ui.customTweetProcessing')}</h2>
           </div>
-          <button type="button" class="discord-modal-close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </button>
+          <div class="discord-modal-actions">
+            <button type="button" class="discord-btn discord-btn-secondary discord-btn-small" id="open-settings-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.63l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.21.07-.48-.12-.63l-2.11-1.66Z"/>
+              </svg>
+              ${t('ui.settings')}
+            </button>
+            <button type="button" class="discord-modal-close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="discord-modal-body">
           <form id="custom-prompt-form">
             <div class="discord-input-block">
+              <label class="discord-input-label">${t('ui.aiProcessingMethod')}</label>
+              <div class="discord-input-wrapper">
+                <select id="ai-provider-select" name="ai-provider-select" class="discord-input">
+                  <option value="none">${t('ui.noAiOption')}</option>
+                  <option value="openai">${t('ui.useOpenAI')}</option>
+                  <option value="anthropic">${t('ui.useAnthropic')}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="custom-prompt-block" class="discord-input-block" style="display: none;">
               <label class="discord-input-label">${t('ui.customPrompt')}</label>
               <div class="discord-input-wrapper">
                 <textarea id="custom-prompt" name="custom-prompt" class="discord-input" rows="4" placeholder="${t('ui.customPromptPlaceholder')}"></textarea>
@@ -595,6 +619,33 @@
 		// Load Discord channels into select dropdown
 		loadDiscordChannels();
 
+		// Handle settings button click
+		document.getElementById("open-settings-btn").addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			// Close current modal
+			modalContainer.remove();
+			
+			// Open settings modal
+			showConfigurationModal();
+		});
+
+		// Handle AI provider change to show/hide custom prompt field
+		document.getElementById("ai-provider-select").addEventListener("change", (e) => {
+			const selectedProvider = e.target.value;
+			const customPromptBlock = document.getElementById("custom-prompt-block");
+			const customPromptField = document.getElementById("custom-prompt");
+			
+			if (selectedProvider === "none") {
+				customPromptBlock.style.display = "none";
+				customPromptField.required = false;
+			} else {
+				customPromptBlock.style.display = "block";
+				customPromptField.required = true;
+			}
+		});
+
 		// Close modal on backdrop click
 		modalContainer.addEventListener("click", (e) => {
 			if (e.target === modalContainer) {
@@ -622,24 +673,103 @@
 			.addEventListener("submit", async (e) => {
 				e.preventDefault();
 
+				const selectedProvider = document.getElementById("ai-provider-select").value;
 				const customPrompt = document.getElementById("custom-prompt").value.trim();
-				if (!customPrompt) {
+				const selectedChannelId = document.getElementById("discord-channel-select").value;
+				
+				// Validate channel selection
+				if (!selectedChannelId) {
+					alert(t('ui.selectDiscordChannelError'));
+					return;
+				}
+
+				// Validate custom prompt if AI is selected
+				if (selectedProvider !== "none" && !customPrompt) {
 					alert(t('ui.enterCustomPrompt'));
 					return;
 				}
 
-				const selectedChannelId = document.getElementById("discord-channel-select").value;
-				if (!selectedChannelId) {
-					alert(t('ui.selectDiscordChannelError'));
+				// Check if API key is available for selected provider
+				if (selectedProvider === "openai" && !config.openaiApiKey) {
+					alert("請先在設定中配置 OpenAI API 金鑰");
+					return;
+				}
+				if (selectedProvider === "anthropic" && !config.anthropicApiKey) {
+					alert("請先在設定中配置 Anthropic API 金鑰");
 					return;
 				}
 
 				// Close modal
 				modalContainer.remove();
 
-				// Process the post with custom prompt and selected channel
-				await processPostWithCustomPrompt(post, customPrompt, selectedChannelId);
+				// Process the post based on selected provider
+				await processPostWithProvider(post, selectedProvider, customPrompt, selectedChannelId);
 			});
+	}
+
+	// Function to process post with selected provider
+	async function processPostWithProvider(post, selectedProvider, customPrompt, selectedChannelId = null) {
+		// Find the button to show loading state
+		const discordButton = post.querySelector(".discord-button");
+		if (discordButton) {
+			discordButton.classList.add("loading");
+		}
+
+		try {
+			// Extract post data based on platform
+			let postText, author, postUrl;
+			
+			if (currentPlatform === 'twitter') {
+				postText = post.querySelector('[data-testid="tweetText"]')?.textContent || "";
+				const authorElement = post.querySelector('[data-testid="User-Name"]');
+				author = authorElement?.textContent || "";
+				
+				// Get tweet URL
+				const links = post.querySelectorAll("a");
+				for (const link of links) {
+					if (link.href && link.href.includes("/status/")) {
+						postUrl = link.href;
+						break;
+					}
+				}
+			}
+
+			let processedContent;
+			
+			if (selectedProvider === "none") {
+				// No AI processing, just use the URL
+				processedContent = postUrl;
+			} else {
+				// Use AI processing with custom prompt
+				processedContent = await processWithCustomPrompt(postText, post, customPrompt, selectedProvider);
+			}
+
+			// Send to Discord
+			await sendToDiscord(processedContent, postText, author, postUrl, selectedChannelId);
+
+			// Show success state
+			if (discordButton) {
+				discordButton.classList.remove("loading");
+				discordButton.classList.add("success");
+
+				// Reset after 2 seconds
+				setTimeout(() => {
+					discordButton.classList.remove("success");
+				}, 2000);
+			}
+		} catch (error) {
+			console.error(t('ui.processingError'), error);
+
+			if (discordButton) {
+				discordButton.classList.remove("loading");
+				discordButton.classList.add("error");
+
+				// Reset after 2 seconds
+				setTimeout(() => {
+					discordButton.classList.remove("error");
+				}, 2000);
+			}
+		}
 	}
 
 	// Function to process post with custom prompt
@@ -701,7 +831,7 @@
 	}
 
 	// Function to process with custom prompt using selected AI provider
-	async function processWithCustomPrompt(text, post, customPrompt) {
+	async function processWithCustomPrompt(text, post, customPrompt, selectedProvider = null) {
 
 		// Check if post contains images
 		let imageUrls = [];
@@ -721,13 +851,16 @@
 			const isAsianLanguage = containsChinese || containsJapanese || containsKorean;
 
 
-			if (config.apiProvider === "openai" && config.openaiApiKey) {
+			// Use selected provider or fall back to config
+			const provider = selectedProvider || config.apiProvider;
+			
+			if (provider === "openai" && config.openaiApiKey) {
 				if (imageUrls.length > 0) {
 					return await processWithOpenAIVision(text, imageUrls, customPrompt, isAsianLanguage);
 				} else {
 					return await processWithOpenAI(text, customPrompt, isAsianLanguage);
 				}
-			} else if (config.apiProvider === "anthropic" && config.anthropicApiKey) {
+			} else if (provider === "anthropic" && config.anthropicApiKey) {
 				return await processWithAnthropic(text, customPrompt, isAsianLanguage);
 			} else {
 				return text;
@@ -1024,14 +1157,16 @@
 	}
 
 	// Function to send to Discord
-	async function sendToDiscord(summary, originalText, author, url, channelId = null) {
+	async function sendToDiscord(processedContent, originalText, author, url, channelId = null) {
 
 		let content;
 
-		if (config.apiProvider === "none") {
+		// If processedContent is just a URL (no AI processing), use it directly
+		if (processedContent === url) {
 			content = url;
 		} else {
-			content = `${summary}\n\n${url}`;
+			// AI processed content
+			content = `${processedContent}\n\n${url}`;
 		}
 
 		const payload = {
@@ -1117,41 +1252,6 @@
             </div>
             
             <div class="discord-input-block">
-              <label class="discord-input-label">${t('ui.aiProcessingService')}</label>
-              <div class="discord-radio-group">
-                <label class="discord-radio-option">
-                  <input type="radio" name="api-provider" value="openai" ${
-										config.apiProvider === "openai" ? "checked" : ""
-									}>
-                  <div class="discord-radio-content">
-                    <div class="discord-radio-title">${t('ui.openaiGpt4o')}</div>
-                    <div class="discord-radio-desc">${t('ui.openaiDescription')}</div>
-                  </div>
-                </label>
-                <label class="discord-radio-option">
-                  <input type="radio" name="api-provider" value="anthropic" ${
-										config.apiProvider === "anthropic" ? "checked" : ""
-									}>
-                  <div class="discord-radio-content">
-                    <div class="discord-radio-title">${t('ui.anthropicClaude')}</div>
-                    <div class="discord-radio-desc">${t('ui.anthropicDescription')}</div>
-                  </div>
-                </label>
-                <label class="discord-radio-option">
-                  <input type="radio" name="api-provider" value="none" ${
-										config.apiProvider === "none" ? "checked" : ""
-									}>
-                  <div class="discord-radio-content">
-                    <div class="discord-radio-title">${t('ui.noAi')}</div>
-                    <div class="discord-radio-desc">${t('ui.noAiDescription')}</div>
-                  </div>
-                </label>
-              </div>
-            </div>
-            
-            <div id="openai-key-field" class="discord-input-block" ${
-							config.apiProvider !== "openai" ? 'style="display:none;"' : ""
-						}>
               <label class="discord-input-label">${t('ui.openaiApiKey')}</label>
               <div class="discord-input-wrapper">
                 <input type="password" id="openai-api-key" name="openai-api-key" class="discord-input" value="${
@@ -1163,9 +1263,7 @@
               </div>
             </div>
             
-            <div id="anthropic-key-field" class="discord-input-block" ${
-							config.apiProvider !== "anthropic" ? 'style="display:none;"' : ""
-						}>
+            <div class="discord-input-block">
               <label class="discord-input-label">${t('ui.anthropicApiKey')}</label>
               <div class="discord-input-wrapper">
                 <input type="password" id="anthropic-api-key" name="anthropic-api-key" class="discord-input" value="${
@@ -1234,18 +1332,6 @@
 			showConfigurationModal();
 		});
 
-		// Handle API provider change to show/hide relevant fields
-		document.querySelectorAll('input[name="api-provider"]').forEach((radio) => {
-			radio.addEventListener("change", () => {
-				const provider = document.querySelector(
-					'input[name="api-provider"]:checked'
-				).value;
-				document.getElementById("openai-key-field").style.display =
-					provider === "openai" ? "block" : "none";
-				document.getElementById("anthropic-key-field").style.display =
-					provider === "anthropic" ? "block" : "none";
-			});
-		});
 
 		// Handle form submission
 		document
@@ -1256,34 +1342,8 @@
 				config.discordWebhookUrl = document.getElementById(
 					"discord-webhook-url"
 				).value;
-				config.apiProvider = document.querySelector(
-					'input[name="api-provider"]:checked'
-				).value;
-
-				if (config.apiProvider === "openai") {
-					config.openaiApiKey = document.getElementById("openai-api-key").value;
-				} else if (config.apiProvider === "anthropic") {
-					config.anthropicApiKey =
-						document.getElementById("anthropic-api-key").value;
-				}
-
-				// If any key API is selected but no key is provided, show a warning
-				if (
-					(config.apiProvider === "openai" && !config.openaiApiKey) ||
-					(config.apiProvider === "anthropic" && !config.anthropicApiKey)
-				) {
-					const warningMsg = document.createElement("div");
-					warningMsg.className = "discord-warning-message";
-					warningMsg.textContent = t('ui.apiKeyWarning');
-					document.querySelector(".discord-modal-body").appendChild(warningMsg);
-
-					// Remove warning after 3 seconds but don't close the modal
-					setTimeout(() => {
-						warningMsg.remove();
-					}, 3000);
-
-					return; // Don't save or close the modal
-				}
+				config.openaiApiKey = document.getElementById("openai-api-key").value;
+				config.anthropicApiKey = document.getElementById("anthropic-api-key").value;
 
 
 				config.isConfigured = true;
