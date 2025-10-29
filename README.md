@@ -1,5 +1,5 @@
 
-# Social Media to Discord
+# Share to Discord
 
 A browser extension that allows you to send custom-processed social media posts directly to Discord with a single click. The extension supports both Twitter and Threads, uses AI to process posts according to your custom instructions, including content from both text and images, and posts them to your Discord server via webhooks.
 
