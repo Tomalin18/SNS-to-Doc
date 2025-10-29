@@ -117,6 +117,12 @@
   border-bottom: 1px solid var(--discord-border);
 }
 
+.discord-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .discord-modal-title {
   display: flex;
   align-items: center;
@@ -383,6 +389,19 @@
 
 .discord-btn-secondary:hover {
   background-color: var(--discord-hover);
+}
+
+.discord-btn-small {
+  padding: 8px 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.discord-btn-small svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Dark mode variables */
